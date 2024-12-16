@@ -17,6 +17,9 @@ globalThis['openMusicControls'] = showMusicControls;
 globalThis['openColorScheme'] = showColorScheme;
 globalThis['mpris'] = Mpris;
 globalThis['getString'] = getString
+globalThis["toggleVisibility"] = () => {
+  showBar.value = !showBar.value;
+};
 // load monitor shell modes from userOptions
 const initialMonitorShellModes = () => {
     const numberOfMonitors = Gdk.Display.get_default()?.get_n_monitors() || 1;

@@ -76,36 +76,36 @@ export const Bar = async (monitor = 0) => {
         }),
         endWidget: Widget.Box({}),
         setup: (self) => {
-            self.hook(Battery, (self) => {
-                if (!Battery.available) return;
-                self.toggleClassName('bar-bg-focus-batterylow', Battery.percent <= userOptions.battery.low);
-            })
-        }
-    });
-    const nothingContent = Widget.Box({
-        className: 'bar-bg-nothing',
-    })
-    return Widget.Window({
-        monitor,
-        name: `bar${monitor}`,
-        anchor: ['top', 'left', 'right'],
-        exclusivity: 'exclusive',
-        visible: true,
-        child: Widget.Stack({
-            homogeneous: false,
-            transition: 'slide_up_down',
-            transitionDuration: userOptions.animations.durationLarge,
-            children: {
-                'normal': normalBarContent,
-                'focus': focusedBarContent,
-                'nothing': nothingContent,
-            },
-            setup: (self) => self.hook(currentShellMode, (self) => {
-                self.shown = currentShellMode.value[monitor];
-            })
+          self.hook(Battery, (self) => {
+            if (!Battery.available) return;
+            self.toggleClassName(
+              "bar-bg-focus-batterylow",
+              Battery.percent <= userOptions.battery.low,
+            );
+          });
+        },
+  });
+  return Widget.Window({
+    monitor,
+    name: `bar${monitor}`,
+    anchor: ["bottom", "left", "right"],
+    exclusivity: "exclusive",
+    visible: true,
+    child: Widget.Stack({
+      homogeneous: false,
+      transition: "slide_down_up",
+      transitionDuration: userOptions.animations.durationLarge,
+      children: {
+        normal: normalBarContent,
+        focus: focusedBarContent,
+      },
+      setup: (self) =>
+        self.hook(currentShellMode, (self) => {
+          self.shown = currentShellMode.value;
         }),
-    });
-}
+    }),
+  });
+};
 
 export const BarCornerTopleft = (monitor = 0) => Widget.Window({
     monitor,
