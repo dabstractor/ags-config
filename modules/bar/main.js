@@ -1,6 +1,7 @@
 const { Gtk } = imports.gi;
-import Widget from "resource:///com/github/Aylur/ags/widget.js";
 import Battery from "resource:///com/github/Aylur/ags/service/battery.js";
+import Widget from "resource:///com/github/Aylur/ags/widget.js";
+// import Variable from "resource:///com/github/Aylur/ags/variable.js";
 
 import WindowTitle from "./normal/spaceleft.js";
 import Indicators from "./normal/spaceright.js";
@@ -8,7 +9,7 @@ import Music from "./normal/music.js";
 import System from "./normal/system.js";
 import { enableClickthrough } from "../.widgetutils/clickthrough.js";
 import { RoundedCorner } from "../.commonwidgets/cairo_roundedcorner.js";
-import { currentShellMode } from "../../variables.js";
+import { currentShellMode, showBar } from "../../variables.js";
 
 const NormalOptionalWorkspaces = async () => {
   try {
@@ -89,12 +90,13 @@ export const Bar = async (monitor = 0) => {
       });
     },
   });
-  return Widget.Window({
+
+  const barWindow = Widget.Window({
     monitor,
     name: `bar${monitor}`,
     anchor: ["bottom", "left", "right"],
     exclusivity: "exclusive",
-    visible: true,
+    visible: showBar.bind(),
     child: Widget.Stack({
       homogeneous: false,
       transition: "slide_down_up",
@@ -103,10 +105,11 @@ export const Bar = async (monitor = 0) => {
         normal: normalBarContent,
         focus: focusedBarContent,
       },
-      setup: (self) =>
+      setup: (self) => {
         self.hook(currentShellMode, (self) => {
           self.shown = currentShellMode.value;
-        }),
+        });
+      },
     }),
   });
 };
