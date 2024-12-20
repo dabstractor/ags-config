@@ -3,6 +3,7 @@ import App from "resource:///com/github/Aylur/ags/app.js";
 import Variable from "resource:///com/github/Aylur/ags/variable.js";
 import Mpris from "resource:///com/github/Aylur/ags/service/mpris.js";
 import * as Utils from "resource:///com/github/Aylur/ags/utils.js";
+import Hyprland from "resource:///com/github/Aylur/ags/service/hyprland.js";
 const { exec, execAsync } = Utils;
 
 Gtk.IconTheme.get_default().append_search_path(`${App.configDir}/assets/icons`);
@@ -11,12 +12,19 @@ Gtk.IconTheme.get_default().append_search_path(`${App.configDir}/assets/icons`);
 export const showMusicControls = Variable(false, {});
 export const showColorScheme = Variable(false, {});
 export const showBar = Variable(true, {});
+export const workspaceBars = {};
 
 globalThis["openMusicControls"] = showMusicControls;
 globalThis["openColorScheme"] = showColorScheme;
 globalThis["mpris"] = Mpris;
 globalThis["toggleVisibility"] = () => {
-  showBar.value = !showBar.value;
+  const workspace = Hyprland.active.workspace.id;
+  workspaceBars[workspace] =
+    workspaceBars[workspace] === undefined // if never been set
+      ? !showBar.value // use the current value
+      : !workspaceBars[workspace]; // otherwise toggle
+
+  showBar.value = workspaceBars[workspace]; // !showBar.value;
 };
 
 // Mode switching
@@ -30,7 +38,7 @@ globalThis["cycleMode"] = () => {
   }
 };
 
-// // Window controls
+// Window controls
 const range = (length, start = 1) =>
   Array.from({ length }, (_, i) => i + start);
 globalThis["toggleWindowOnAllMonitors"] = (name) => {
