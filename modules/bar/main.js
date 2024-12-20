@@ -1,6 +1,8 @@
 const { Gtk } = imports.gi;
-import Widget from 'resource:///com/github/Aylur/ags/widget.js';
-import Battery from 'resource:///com/github/Aylur/ags/service/battery.js';
+import Battery from "resource:///com/github/Aylur/ags/service/battery.js";
+import Widget from "resource:///com/github/Aylur/ags/widget.js";
+// import Variable from "resource:///com/github/Aylur/ags/variable.js";
+import Hyprland from "resource:///com/github/Aylur/ags/service/hyprland.js";
 
 import WindowTitle from "./normal/spaceleft.js";
 import Indicators from "./normal/spaceright.js";
@@ -8,7 +10,12 @@ import Music from "./normal/music.js";
 import System from "./normal/system.js";
 import { enableClickthrough } from "../.widgetutils/clickthrough.js";
 import { RoundedCorner } from "../.commonwidgets/cairo_roundedcorner.js";
-import { currentShellMode } from '../../variables.js';
+import {
+  currentShellMode,
+  showBar,
+  showBarDefault,
+  workspaceBars,
+} from "../../variables.js";
 
 const NormalOptionalWorkspaces = async () => {
     try {
@@ -99,12 +106,19 @@ export const Bar = async (monitor = 0) => {
         normal: normalBarContent,
         focus: focusedBarContent,
       },
-      setup: (self) =>
-        self.hook(currentShellMode, (self) => {
-          self.shown = currentShellMode.value;
-        }),
+      setup: (self) => {
+        self.hook(Hyprland.active.workspace, (self) => {
+          showBar.value =
+            workspaceBars[Hyprland.active.workspace.id] === undefined
+              ? showBarDefault.value
+              : !showBarDefault.value
+                ? false
+                : workspaceBars[Hyprland.active.workspace.id];
+        });
+      },
     }),
   });
+
 };
 
 export const BarCornerTopleft = (monitor = 0) => Widget.Window({
