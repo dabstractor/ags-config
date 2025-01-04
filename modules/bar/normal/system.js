@@ -166,14 +166,7 @@ const BatteryModule = () =>
     transition: "slide_up_down",
     transitionDuration: userOptions.animations.durationLarge,
     children: {
-      laptop: Box({
-        className: "spacing-h-4",
-        children: [
-          BarGroup({ child: Utilities() }),
-          BarGroup({ child: BarBattery() }),
-        ],
-      }),
-      desktop: BarGroup({
+      laptop: BarGroup({
         child: Box({
           hexpand: true,
           hpack: "center",
@@ -187,6 +180,7 @@ const BatteryModule = () =>
           setup: (self) =>
             self.poll(900000, async (self) => {
               const WEATHER_CACHE_PATH = WEATHER_CACHE_FOLDER + "/wttr.in.txt";
+              const unit = userOptions.weather.unit == "F" ? "℉" : "℃";
               const updateWeatherForCity = (city) =>
                 execAsync(
                   `curl https://wttr.in/${city.replace(/ /g, "%20")}?format=j1`,
@@ -201,11 +195,17 @@ const BatteryModule = () =>
                       weather.current_condition[0].weatherCode;
                     const weatherDesc =
                       weather.current_condition[0].weatherDesc[0].value;
-                    const temperature = weather.current_condition[0].temp_C;
-                    const feelsLike = weather.current_condition[0].FeelsLikeC;
+                    const temperature =
+                      weather.current_condition[0][
+                        `temp_${userOptions.weather.unit}`
+                      ];
+                    const feelsLike =
+                      weather.current_condition[0][
+                        `FeelsLike${userOptions.weather.unit}`
+                      ];
                     const weatherSymbol = WEATHER_SYMBOL[WWO_CODE[weatherCode]];
                     self.children[0].label = weatherSymbol;
-                    self.children[1].label = `${temperature}℃ • Feels like ${feelsLike}℃`;
+                    self.children[1].label = `${temperature}${unit} • Feels like ${feelsLike}${unit}`;
                     self.tooltipText = weatherDesc;
                   })
                   .catch((err) => {
@@ -218,12 +218,18 @@ const BatteryModule = () =>
                         weather.current_condition[0].weatherCode;
                       const weatherDesc =
                         weather.current_condition[0].weatherDesc[0].value;
-                      const temperature = weather.current_condition[0].temp_C;
-                      const feelsLike = weather.current_condition[0].FeelsLikeC;
+                      const temperature =
+                        weather.current_condition[0][
+                          `temp_${userOptions.weather.unit}`
+                        ];
+                      const feelsLike =
+                        weather.current_condition[0][
+                          `FeelsLike${userOptions.weather.unit}`
+                        ];
                       const weatherSymbol =
                         WEATHER_SYMBOL[WWO_CODE[weatherCode]];
                       self.children[0].label = weatherSymbol;
-                      self.children[1].label = `${temperature}℃ • Feels like ${feelsLike}℃`;
+                      self.children[1].label = `${temperature}${unit} • Feels like ${feelsLike}${unit}`;
                       self.tooltipText = weatherDesc;
                     } catch (err) {
                       print(err);
@@ -250,8 +256,7 @@ const BatteryModule = () =>
     },
     setup: (stack) =>
       Utils.timeout(10, () => {
-        if (!Battery.available) stack.shown = "desktop";
-        else stack.shown = "laptop";
+        stack.shown = "desktop";
       }),
   });
 

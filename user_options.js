@@ -4,6 +4,13 @@
 //   options listed in this file will override the default ones in the above file
 
 const userConfigOptions = {
-}
+  // format the time to 12H
+  time: {
+    format: "%I:%M",
+  },
+  weather: {
+    city: "Asheville",
+  },
+};
 
 export default userConfigOptions;

@@ -49,14 +49,6 @@ export const Bar = async (monitor = 0) => {
     });
   const normalBarContent = Widget.CenterBox({
     className: "bar-bg",
-    setup: (self) => {
-      const styleContext = self.get_style_context();
-      const minHeight = styleContext.get_property(
-        "min-height",
-        Gtk.StateFlags.NORMAL,
-      );
-      // execAsync(['bash', '-c', `hyprctl keyword monitor ,addreserved,${minHeight},0,0,0`]).catch(print);
-    },
     startWidget: await WindowTitle(monitor),
     centerWidget: Widget.Box({
       className: "spacing-h-4",
@@ -77,12 +69,12 @@ export const Bar = async (monitor = 0) => {
     centerWidget: Widget.Box({
       className: "spacing-h-4",
       children: [
-        SideModule([]),
+        SideModule([System()]),
         Widget.Box({
           homogeneous: true,
           children: [await FocusOptionalWorkspaces()],
         }),
-        SideModule([]),
+        SideModule([System()]),
       ],
     }),
     endWidget: Widget.Box({}),
@@ -97,7 +89,7 @@ export const Bar = async (monitor = 0) => {
     },
   });
 
-  const barWindow = Widget.Window({
+  return Widget.Window({
     monitor,
     name: `bar${monitor}`,
     anchor: ["bottom", "left", "right"],
@@ -105,7 +97,7 @@ export const Bar = async (monitor = 0) => {
     visible: showBar.bind(),
     child: Widget.Stack({
       homogeneous: false,
-      transition: "slide_down_up",
+      transition: "slide_up_down",
       transitionDuration: userOptions.animations.durationLarge,
       children: {
         normal: normalBarContent,
@@ -123,8 +115,6 @@ export const Bar = async (monitor = 0) => {
       },
     }),
   });
-
-  return barWindow;
 };
 
 export const BarCornerTopleft = (monitor = 0) =>
