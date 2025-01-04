@@ -100,7 +100,7 @@ export const Bar = async (monitor = 0) => {
     visible: true,
     child: Widget.Stack({
       homogeneous: false,
-      transition: "slide_down_up",
+      transition: "slide_up_down",
       transitionDuration: userOptions.animations.durationLarge,
       children: {
         normal: normalBarContent,
@@ -118,7 +118,6 @@ export const Bar = async (monitor = 0) => {
       },
     }),
   });
-
 };
 
 export const BarCornerTopleft = (monitor = 0) => Widget.Window({
