@@ -9,7 +9,8 @@ const userConfigOptions = {
     format: "%I:%M",
   },
   weather: {
-    city: "Asheville",
+    // unit: "F",
+    //   city: "Asheville",
   },
 };
 
